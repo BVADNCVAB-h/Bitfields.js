@@ -16,7 +16,10 @@ namespace NspBitFields {
 	}
 	class BitFieldsFormat {
 		public:
-			Constructor( Optional float byteLen_bytes = 1.0, Optional BitFieldsPresets bfPresets ) {}
+			Constructor( 
+				Optional float byteLen_bytes = 1.0, 
+				Optional BitFieldsPresets bfPresets 
+			) {}
 			String[] propertiesNames = {
 				"lenDefined", 		//boolean, default=true//
 				"lenAligned", 		//boolean, default=true//
@@ -35,7 +38,10 @@ namespace NspBitFields {
 	}
 	class BitFields {
 		public:
-			Constructor( BitFieldsFormat bfFormat, Optional BitFieldsPresets bfPresets ) {}
+			Constructor( 
+				BitFieldsFormat bfFormat, 
+				Optional BitFieldsPresets bfPresets 
+			) {}
 			int getRowNum() {}
 			int getRowSize() {}
 			int getTotalSize() {}
@@ -45,8 +51,16 @@ namespace NspBitFields {
 			BitFields setValue( Optional int index = 0, String fieldName, int value ) {}
 			BitFields setValues( Optional int index = 0, Object values ) {}
 			BitFields skipValues() {}
-			BitFields setBytes( Indexed bytes, Optional int fromIndex, Optional int toIndex ) {}
-			BitFields setBytes( String bytes, Optional int fromIndex, Optional int toIndex ) {}
+			BitFields setBytes( 
+				Indexed bytes, 
+				Optional int fromIndex, 
+				Optional int toIndex 
+			) {}
+			BitFields setBytes( 
+				String bytes, 
+				Optional int fromIndex, 
+				Optional int toIndex 
+			) {}
 			Indexed getBytes() {}
 			class {
 				Indexed getValues() {}
