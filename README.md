@@ -1,5 +1,5 @@
 # Bitfields.js
-Mapping Bitfields on Byte Array and vice versa in JavaScript
+Mapping Bitfields onto Byte Array and vice versa in JavaScript
 
 ## Library Interface Notation
 ```java
