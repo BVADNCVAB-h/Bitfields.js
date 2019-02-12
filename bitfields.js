@@ -1020,7 +1020,9 @@ var NspBitFields = new (function() {
 				current.fieldRepeats = output.fieldRepeats;
 			//----------------------------------------------//
 			}
-			var bytes = new valuesArr.constructor( current.bytesNumber );
+			var bytes;
+			if ( argIsString ) bytes = new Array( current.bytesNumber );
+			else bytes = new valuesArr.constructor( current.bytesNumber );
 			var byteMaxVal = (1 << byteLenBits) - 1;
 			for ( var i=fromIndex; i < toIndex; i++ ) {
 				var j = i - fromIndex;
