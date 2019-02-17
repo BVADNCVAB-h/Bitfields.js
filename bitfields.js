@@ -1,55 +1,55 @@
 /*
 //--------------------LIBRARY--INTERFACE--NOTATION------------------------//
 namespace NspBitFields {
-	class BitFieldsPresets {
-		public:
-			Constructor() {}
-			Object errs;
-			Object warns;
-			Function errorHandler; 		//Function(String)//
-			Function warningHandler; 	//Function(String)//
-			Constructor byteArray;  	//default=Array.prototype.constructor//
-			Constructor fieldArray;  	//default=Array.prototype.constructor//
-	}
-	class BitFieldsFormat {
-		public:
-			Constructor( Optional float byteLen_bytes = 1.0, Optional BitFieldsPresets bfPresets ) {}
-			String[] propertiesNames = {
-				"lenDefined", 		//boolean, default=true//
-				"lenAligned", 		//boolean, default=true//
-				"valsDefined", 		//boolean, default=true//
-				"fieldRepeats", 	//integer//
-				"bytesNumber" 		//integer//
-			}
-			BitFieldsFormat addField( String name, int size_bits ) {}
-			BitFieldsFormat modField( String name, int size_bits ) {}
-			BitFieldsFormat addFields( Object fields ) {}
-			BitFieldsFormat modFields( Object fields ) {}
-			BitFieldsFormat skipFields() {}
-			BitFieldsFormat setProperty( String property, Variant value ) {}
-			BitFieldsFormat setProperties( Object properties ) {}
-			Variant getProperty( String property ) {}
-	}
-	class BitFields {
-		public:
-			Constructor( BitFieldsFormat bfFormat, Optional BitFieldsPresets bfPresets ) {}
-			int getRowNum() {}
-			int getRowSize() {}
-			int getTotalSize() {}
-			int getValue( Optional int index = 0, String fieldName ) {}
-			Object getValues( Optional int index = 0 ) {}
-			BitFields getValues( Optional int index = 0, Object outputObj ) {}
-			BitFields setValue( Optional int index = 0, String fieldName, int value ) {}
-			BitFields setValues( Optional int index = 0, Object values ) {}
-			BitFields skipValues() {}
-			BitFields setBytes( Indexed bytes, Optional int fromIndex, Optional int toIndex ) {}
-			BitFields setBytes( String bytes, Optional int fromIndex, Optional int toIndex ) {}
-			Indexed getBytes() {}
-			class {
-				Indexed getValues() {}
-				BitFields setValues( Indexed values ) {}
-			} selName( String fieldName ) {}
-	}
+    class BitFieldsPresets {
+        public:
+            Constructor() {}
+            Object errs;
+            Object warns;
+            Function errorHandler;         //Function(String)//
+            Function warningHandler;       //Function(String)//
+            Constructor byteArray;         //default=Array.prototype.constructor//
+            Constructor fieldArray;        //default=Array.prototype.constructor//
+    }
+    class BitFieldsFormat {
+        public:
+            Constructor( Optional float byteLen_bytes = 1.0, Optional BitFieldsPresets bfPresets ) {}
+            String[] propertiesNames = {
+                "lenDefined",         //boolean, default=true//
+                "lenAligned",         //boolean, default=true//
+                "valsDefined",        //boolean, default=true//
+                "fieldRepeats",       //integer//
+                "bytesNumber"         //integer//
+            }
+            BitFieldsFormat addField( String name, int size_bits ) {}
+            BitFieldsFormat modField( String name, int size_bits ) {}
+            BitFieldsFormat addFields( Object fields ) {}
+            BitFieldsFormat modFields( Object fields ) {}
+            BitFieldsFormat skipFields() {}
+            BitFieldsFormat setProperty( String property, Variant value ) {}
+            BitFieldsFormat setProperties( Object properties ) {}
+            Variant getProperty( String property ) {}
+    }
+    class BitFields {
+        public:
+            Constructor( BitFieldsFormat bfFormat, Optional BitFieldsPresets bfPresets ) {}
+            int getRowNum() {}
+            int getRowSize() {}
+            int getTotalSize() {}
+            int getValue( Optional int index = 0, String fieldName ) {}
+            Object getValues( Optional int index = 0 ) {}
+            BitFields getValues( Optional int index = 0, Object outputObj ) {}
+            BitFields setValue( Optional int index = 0, String fieldName, int value ) {}
+            BitFields setValues( Optional int index = 0, Object values ) {}
+            BitFields skipValues() {}
+            BitFields setBytes( Indexed bytes, Optional int fromIndex, Optional int toIndex ) {}
+            BitFields setBytes( String bytes, Optional int fromIndex, Optional int toIndex ) {}
+            Indexed getBytes() {}
+            class {
+                Indexed getValues() {}
+                BitFields setValues( Indexed values ) {}
+            } selName( String fieldName ) {}
+    }
 }
 //------------------------------------------------------------------------//
 */
@@ -176,6 +176,7 @@ var NspBitFields = new (function() {
 				ERR_BYTES_NOT_SET: 'bytes have not been initialized',
 				ERR_ARRAY_LEN: 'array with wrong length passed',
 				ERR_START_END_INDICES: 'start and/or end indices either exceed boundaries or do not define any part of array',
+				ERR_BYTES_NUM_UDF: 'retrieving bytes number when length is dynamic',
 			};
 		},
 		warns: function() {
@@ -408,7 +409,7 @@ var NspBitFields = new (function() {
 					errMsg += ' (modFields(), name=' + name + ')'; 
 					return bfPresets.errorHandler( errMsg );
 				}
-				var sizeDiff = fieldsPassed[ name ] - fieldsIndex[ name ].size
+				var sizeDiff = fieldsPassed[ name ] - fieldsIndex[ name ].size;
 				properties.fieldsSize.value += sizeDiff;
 				fieldsIndex[ name ].size = fieldsPassed[ name ];
 			}
@@ -694,14 +695,21 @@ var NspBitFields = new (function() {
 		temp = { temp: {} };
 		//--------------CONSTRUCTOR--END-----------------//
 		//---------------PUBLIC--METHODS-----------------//
-		this.getRowNum = function() {
-			return currFieldRepeats;
-		};
 		this.getRowSize = function() {
 			return fieldsSize;
 		};
+		this.getRowNum = function() {
+			return currFieldRepeats;
+		};
 		this.getTotalSize = function() {
 			return fieldsSize * currFieldRepeats;
+		};
+		this.getBytesNum = function() {
+			if ( !lenDefined ) {
+				var errMsg = bfPresets.errs.ERR_BYTES_NUM_UDF + ' (getBytesNum())';
+				return bfPresets.errorHandler( errMsg );
+			}
+			return bytesNumber;
 		};
 		//-----------functionality--of--public--method(s)-----------//
 		var setValue = function( index, name, value ) {
@@ -1138,6 +1146,11 @@ var NspBitFields = new (function() {
 		};
 	};
 })();
+if ( typeof exports === 'object' && typeof module !== 'undefined' ) {
+	module.exports = NspBitFields;
+}
+	
+	
 	
 	
 	
