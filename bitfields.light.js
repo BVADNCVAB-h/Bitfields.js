@@ -1,6 +1,5 @@
 var NspBitFields = new (function() {
 	'use strict';
-	var MAX_BIT_SEQUENCE = 30;
 	var nsp = this;
 	//--------------------------------------------------------//
 	var VALUE = 'value';
@@ -80,9 +79,6 @@ var NspBitFields = new (function() {
 	this.BitFieldsFormat = function( /*opt*/ byteLen /*Bytes*/, /*opt*/ bfPresets ) {
 		var self = this;
 		//----------------------PRIVATE--FIELDS-------------------------------//
-		var byteLenBits;
-		var pointer = 0;
-		var fieldsSize = 0;
 		var properties = {
 			lenDefined: 	{ value: TRUE },
 			lenAligned: 	{ value: TRUE },
@@ -284,7 +280,6 @@ var NspBitFields = new (function() {
 			return value;
 		};
 		self.getValues = function( /*opt*/ index, /*opt*/ outputObj ) {
-			var maxIndex = currFieldRepeats + iFirst - 1;
 			var argOutput = TRUE;
 			if ( !isSet(outputObj) ) {
 				if ( isSet(index) && !isPrimitive(index) ) {
@@ -372,9 +367,7 @@ var NspBitFields = new (function() {
 			else bytes = new valuesArr[ CONSTRUCTOR ]( cBytesNumber );
 			for ( var i=fromIndex; i < toIndex; i++ ) {
 				var j = i - fromIndex;
-				var cByte = ( !argIsString ) ? valuesArr[i] : valuesArr.charCodeAt( i );
-				if ( !argIsString ) bytes[j] = valuesArr[i];
-				else bytes[j] = valuesArr.charCodeAt( i );
+				bytes[j] = ( !argIsString ) ? valuesArr[i] : valuesArr.charCodeAt( i );
 			}
 		//-------------formFields()----------------//
 			currFieldRepeats = cFieldRepeats;
@@ -392,8 +385,8 @@ var NspBitFields = new (function() {
 					if ( bSpaceLeft < fBitsLeft ) {
 						bPartSize = bSpaceLeft;
 					}
-					var fValuePart = bValue >> (bSpaceLeft - bPartSize);
-					fValuePart &= (1 << bPartSize)-1;
+					var fValuePart = bValue >>> (bSpaceLeft - bPartSize);
+					fValuePart &= Math.pow(2, bPartSize)-1;
 					fValuePart <<= fBitsLeft - bPartSize;
 					fields[ fCounter ][ VALUE ][ rCounter ] += fValuePart;
 					bSpaceLeft -= bPartSize;
@@ -431,8 +424,8 @@ var NspBitFields = new (function() {
 						if ( fBitsLeft < bSpaceLeft ) {
 							fPartSize = fBitsLeft;
 						}
-						var bValuePart = fValue >> (fBitsLeft - fPartSize);
-						bValuePart &= (1 << fPartSize)-1;
+						var bValuePart = fValue >>> (fBitsLeft - fPartSize);
+						bValuePart &= Math.pow(2, fPartSize)-1;
 						bValuePart <<= bSpaceLeft - fPartSize;
 						bytes[ bCounter ] += bValuePart;
 						bSpaceLeft -= fPartSize;

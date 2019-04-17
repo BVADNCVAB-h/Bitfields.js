@@ -1,5 +1,5 @@
 # Bitfields.js
-Mapping Bitfields onto Byte Array and vice versa in JavaScript
+Mapping Bit Fields onto Byte Array and vice versa in JavaScript
 
 ## Library Interface Notation
 ```java
@@ -58,7 +58,7 @@ namespace NspBitFields {
 ## Light version 
 Light version has the same functionality and interface but does not provide any kind of type control or consistency check of input data.
 ## Description
-The library is used for representing given sequence of bits in two formats: table with variable-sized columns ( "fields" ) and linear sequence of same-sized cells ( "bytes" ), in order to convert one to the other. 
+The library is used for switching between two different markups applied to the given sequence of bits: one representing different-sized blocks ("fields") and another - same-sized blocks ("bytes").
 Using C syntax it could be described this way:
 ```c
 union {
@@ -71,14 +71,13 @@ union {
 };
 /*
 *Comments on disposal order of fields:
-*Unlike implementations of bit fields in C/C++ 
-*where fields are placed in reverse order (right-to-left), 
-*left-to-right order is used here
-*(as one unfamiliar with C or C++ would expect)
+*The fields declared first is placed at the beginning of byte array,
+*unlike implementations of bit fields in C/C++ 
+*where the fields declared first would be placed at the end
 */
 ```
 ## Limitations
-Maximal field size -- 30 bits, maximal char/byte size -- 30 bits
+Maximal field size -- 31 bits, maximal char/byte size -- 31 bits
 ## Usage
 ### Creating instances
 ##### Functionality is divided into 3 "classes" -- <i>BitFieldsPresets</i>, <i>BitFieldsFormat</i> and <i>BitFields</i>. In browser environment, they are grouped under the "namespace" <i>NspBitFields</i>. <i>BitFieldsFormat</i> constructor can be initialized with value defining byte size in bytes ( 1 by default ). <i>BitFields</i> constructor must be supplied with an instance of <i>BitFieldsFormat</i>

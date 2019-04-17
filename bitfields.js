@@ -56,7 +56,7 @@ namespace NspBitFields {
 
 var NspBitFields = new (function() {
 	'use strict';
-	var MAX_BIT_SEQUENCE = 30;
+	var MAX_BIT_SEQUENCE = 31;
 	var nsp = this;
 	//---------------type--control--functions-----------------//
 	var toStr = Object.prototype.toString;
@@ -722,16 +722,16 @@ var NspBitFields = new (function() {
 				errMsg += ' (setValue(), name == ' + name + ')';
 				return bfPresets.errorHandler( errMsg );
 			}
-			var maxValue = (1 << fieldsIndex[ name ].size);
+			var maxValue = Math.pow(2, fieldsIndex[ name ].size)-1;
 			if ( !isUInt(value) ) {
 				var errMsg = bfPresets.errs.ERR_PARAMETER_TYPE;
 				errMsg += ' (setValue(), typeof value('+value+') !== [UInt])';
 				return bfPresets.errorHandler( errMsg );
 			}
-			if ( value < 0 || value >= maxValue ) {
+			if ( value < 0 || value > maxValue ) {
 				var errMsg = bfPresets.errs.ERR_PARAMETER_VALUE;
 				errMsg += ' (' + crCaller + '(), value=' + value;
-				errMsg += ', min=0, max=' + (maxValue-1) + ')';
+				errMsg += ', min=0, max=' + maxValue + ')';
 				return bfPresets.errorHandler( errMsg );
 			}
 			//--------------------------------------------------------------//
@@ -920,7 +920,7 @@ var NspBitFields = new (function() {
 						errMsg += ', max=' + fieldRepeats + ')';
 						return bfPresets.errorHandler( errMsg );
 					}
-					var maxValue = (1 << fieldsIndex[ name ].size);
+					var maxValue =  Math.pow(2, fieldsIndex[ name ].size)-1;
 					for ( var i=0; i <= lastIndex; i++ ) {
 						if ( !isSet(valuesArr[i]) ) continue;
 						if ( !isInt(valuesArr[i]) ) {
@@ -929,11 +929,11 @@ var NspBitFields = new (function() {
 							errMsg += ' at index ' + i + ' value ' + valuesArr[i] + ')';
 							return bfPresets.errorHandler( errMsg );
 						}
-						if ( valuesArr[i] < 0 || valuesArr[i] >= maxValue ) {
+						if ( valuesArr[i] < 0 || valuesArr[i] > maxValue ) {
 							var errMsg = bfPresets.errs.ERR_PARAMETER_VALUE;
 							errMsg += ' (selName() -> setValues(), at index ' + i;
 							errMsg += ' value ' + valuesArr[i];
-							errMsg += ', min=0, max=' + (maxValue-1);
+							errMsg += ', min=0, max=' + maxValue;
 							return bfPresets.errorHandler( errMsg );
 						}
 						fieldsIndex[ name ].value[ i ] = valuesArr[i];
@@ -1031,7 +1031,7 @@ var NspBitFields = new (function() {
 			var bytes;
 			if ( argIsString ) bytes = new Array( current.bytesNumber );
 			else bytes = new valuesArr.constructor( current.bytesNumber );
-			var byteMaxVal = (1 << byteLenBits) - 1;
+			var byteMaxVal = Math.pow(2, byteLenBits)-1;
 			for ( var i=fromIndex; i < toIndex; i++ ) {
 				var j = i - fromIndex;
 				var cByte = ( !argIsString ) ? valuesArr[i] : valuesArr.charCodeAt( i );
@@ -1041,8 +1041,7 @@ var NspBitFields = new (function() {
 					errMsg += ', min=0, max=' + byteMaxVal + ', type [UInt])';
 					return bfPresets.errorHandler( errMsg );
 				}
-				if ( !argIsString ) bytes[j] = valuesArr[i];
-				else bytes[j] = valuesArr.charCodeAt( i );
+				bytes[j] = cByte;
 			}
 		//-------------formFields()----------------//
 			currFieldRepeats = current.fieldRepeats;
@@ -1060,8 +1059,8 @@ var NspBitFields = new (function() {
 					if ( bSpaceLeft < fBitsLeft ) {
 						bPartSize = bSpaceLeft;
 					}
-					var fValuePart = bValue >> (bSpaceLeft - bPartSize);
-					fValuePart &= (1 << bPartSize)-1;
+					var fValuePart = bValue >>> (bSpaceLeft - bPartSize);
+					fValuePart &= Math.pow(2, bPartSize)-1; 
 					fValuePart <<= fBitsLeft - bPartSize;
 					fields[ fCounter ].value[ rCounter ] += fValuePart;
 					bSpaceLeft -= bPartSize;
@@ -1113,8 +1112,8 @@ var NspBitFields = new (function() {
 						if ( fBitsLeft < bSpaceLeft ) {
 							fPartSize = fBitsLeft;
 						}
-						var bValuePart = fValue >> (fBitsLeft - fPartSize);
-						bValuePart &= (1 << fPartSize)-1;
+						var bValuePart = fValue >>> (fBitsLeft - fPartSize);
+						bValuePart &= Math.pow(2, fPartSize)-1;
 						bValuePart <<= bSpaceLeft - fPartSize;
 						bytes[ bCounter ] += bValuePart;
 						bSpaceLeft -= fPartSize;
